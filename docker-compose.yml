@@ -1,0 +1,39 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3.7'
+#Define services
+services:
+  mysql:
+    image: mysql:8.0.27
+    container_name: mysql-app
+    volumes:
+      - my-db:/var/lib/mysql
+    ports:
+      - 3306:3306 
+    expose:
+      - 3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_DATABASE=full-stack-ecommerce
+      - MYSQL_USER=ecommerceapp
+      - MYSQL_PASSWORD=ecommerceapp
+
+  spring:
+    image: backend
+    build: "./spring-boot-ecommerce"
+    container_name: spring-app
+    ports:
+      - 8080:8080 
+    depends_on:
+      - mysql
+
+  angular:
+    image: frontend
+    build: "./angular-ecommerce"
+    container_name: angular-app
+    ports:
+      - 4200:80
+    depends_on:
+      - spring
+#Volumes for DB data
+volumes:
+  my-db:
